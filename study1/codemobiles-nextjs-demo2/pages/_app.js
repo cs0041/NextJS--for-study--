@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import "../assets/css/index.css";
 
 export default function CMApp({ Component, pageProps }) {
+  // console.log(JSON.stringify(pageProps));
   return (
     <div>
       <Head>
@@ -18,8 +19,7 @@ export default function CMApp({ Component, pageProps }) {
         />
       </Head>
       <Nav />
-      <div className="index-content" >
-        
+      <div className="index-content">
         <Component {...pageProps} />
       </div>
       <Footer />
