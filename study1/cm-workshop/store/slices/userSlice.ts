@@ -11,26 +11,55 @@ interface UserState {
   user?: UserData
 }
 
+interface SingleProps{
+  data:string
+}
+
 const initialState: UserState = {
-  username: 'ss2222',
+  username: 'pascal',
   accessToken: '',
   isAuthenticated: false,
   isAuthenticating: true,
   user: undefined,
 }
 
+interface SignInAction {
+  username: string
+  password: string
+}
+
+export const signUp = createAsyncThunk(
+  'user/signup',
+  async (credential: SignInAction) => {
+    const p1 = new Promise((res) =>
+      setTimeout(() => res({ result: 'success' }), 3000)
+    )
+    return await p1
+  }
+)
+
+
 const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
-  reducers: {},
-  extraReducers: (builder) => {},
+  reducers: {
+    resetUsername: (state, action: PayloadAction<SingleProps>) => {
+      state.username = action.payload.data
+    },
+  },
+  extraReducers: (builder) => {
+     builder.addCase(signUp.fulfilled, (state, action:any) => {
+      state.username = action.payload.result;
+     } )
+  },
 })
 
+export const { resetUsername } = userSlice.actions
+
 // export common user selector
-export const userSelector = (store: RootState) => store.user;
-export const isAuthenticatedSelector = (store: RootState): boolean => store.user.isAuthenticated;
-
-
+export const userSelector = (store: RootState) => store.user
+export const isAuthenticatedSelector = (store: RootState): boolean =>
+  store.user.isAuthenticated
 
 // // export reducer
 export default userSlice.reducer

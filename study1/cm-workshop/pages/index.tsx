@@ -1,16 +1,28 @@
 import Layout from '@/components/Layouts/Layout'
-import { userSelector } from '@/store/slices/userSlice'
+import { userSelector, resetUsername,signUp } from '@/store/slices/userSlice'
+import { useAppDispatch } from '@/store/store'
 import React from 'react'
 import { useSelector } from 'react-redux'
+
 type Props = {}
 
-export default function index({}: Props) {
-
-  const user= useSelector(userSelector)
+export default function Index({}: Props) {
+  const user = useSelector(userSelector)
+  const dispatch = useAppDispatch()
 
   return (
     <Layout>
-      <div>index {user.username} </div>
+      <div>Lek {user.username}</div>
+      <button onClick={() => dispatch(resetUsername({ data: '5555' }))}>
+        Reset
+      </button>
+
+      <button
+        onClick={() =>
+          dispatch(signUp({ username: 'admin', password: '1234' }))
+          } >
+        SignUp
+      </button>
     </Layout>
   )
 }
