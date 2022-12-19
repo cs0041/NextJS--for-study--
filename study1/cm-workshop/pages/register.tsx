@@ -10,7 +10,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { TextField } from 'formik-material-ui'
 import { Formik, Form, Field, FormikProps } from 'formik'
-import Router from 'next/router'
+import  { useRouter } from 'next/router'
 import { Box } from '@mui/material'
 import { useAppDispatch } from '@/store/store'
 import {signUp} from "@/store/slices/userSlice"
@@ -19,8 +19,8 @@ type Props = {}
 
 export default function register({}: Props) {
   const dispatch = useAppDispatch()
-
-  
+  const router = useRouter()
+   
   const showForm = ({
     values,
     setFieldValue,
@@ -60,7 +60,7 @@ export default function register({}: Props) {
           fullWidth
           size="small"
           color="primary"
-          onClick={() => Router.push('/login')}
+          onClick={() => router.push('/login')}
         >
           Cancel
         </Button>
@@ -93,7 +93,7 @@ export default function register({}: Props) {
                 if (response.meta.requestStatus === "rejected"){
                   alert("Fail")
                 }else{
-                  Router.push("/login")
+                  router.push('/login')
                 }
               }}
             >
