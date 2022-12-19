@@ -21,7 +21,7 @@ interface SingleProps{
 }
 
 const initialState: UserState = {
-  username: 'pascal',
+  username: '',
   accessToken: '',
   isAuthenticated: false,
   isAuthenticating: true,
@@ -50,7 +50,7 @@ export const signIn = createAsyncThunk(
      }
 
      // set access token
-     httpClient.interceptors.request.use((config?: AxiosRequestConfig) => {
+     httpClient.interceptors.request.use((config: AxiosRequestConfig) => {
        if (config && config.headers) {
          config.headers['Authorization'] = `Bearer ${response.token}`
        }
@@ -76,9 +76,18 @@ const userSlice = createSlice({
       state.user = undefined
       state.isAuthenticated = false
      } )
-     builder.addCase(signIn.fulfilled, (state, action:any) => {
-      state.username = action.payload.result;
-     } )
+     builder.addCase(signIn.fulfilled, (state, action) => {
+      state.accessToken = action.payload.token
+      state.isAuthenticated = true
+      state.isAuthenticating = false
+      state.user = action.payload.user
+     })
+     builder.addCase(signIn.rejected, (state, action) => {
+      state.accessToken = ""
+      state.isAuthenticated = false
+      state.isAuthenticating = false
+      state.user = undefined
+     })
   },
 })
 
