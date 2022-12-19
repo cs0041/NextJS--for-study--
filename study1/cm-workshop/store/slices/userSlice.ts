@@ -2,10 +2,9 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { UserData } from '@/models/user.model'
 import { RootState } from '@/store/store'
 import * as serverService from '@/services/serverService'
-import { SignUp } from '@/models/auth.model'
 import httpClient from '@/utils/httpClient'
 import { AxiosRequestConfig } from 'axios'
-
+import Router from 'next/router'
 
 interface UserState {
   username: string
@@ -16,8 +15,8 @@ interface UserState {
   user?: UserData
 }
 
-interface SingleProps{
-  data:string
+interface SingleProps {
+  data: string
 }
 
 const initialState: UserState = {
@@ -44,23 +43,27 @@ export const signUp = createAsyncThunk(
 export const signIn = createAsyncThunk(
   'user/signin',
   async (credential: SignAction) => {
-     const response =await serverService.signIn(credential)
-     if (response.result != 'ok') {
-       throw new Error('login failed')
-     }
+    const response = await serverService.signIn(credential)
+    if (response.result != 'ok') {
+      throw new Error('login failed')
+    }
 
-     // set access token
-     httpClient.interceptors.request.use((config: AxiosRequestConfig) => {
-       if (config && config.headers) {
-         config.headers['Authorization'] = `Bearer ${response.token}`
-       }
+    // set access token
+    httpClient.interceptors.request.use((config: AxiosRequestConfig) => {
+      if (config && config.headers) {
+        config.headers['Authorization'] = `Bearer ${response.token}`
+      }
 
-       return config
-     })
-     return response
+      return config
+    })
+    return response
   }
 )
 
+export const signOut = createAsyncThunk('user/signout', async () => {
+  await serverService.signOut()
+  Router.push('/login')
+})
 
 const userSlice = createSlice({
   name: 'user',
@@ -71,23 +74,29 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-     builder.addCase(signUp.fulfilled, (state, action) => {
-      state.accessToken = ""
+    builder.addCase(signUp.fulfilled, (state, action) => {
+      state.accessToken = ''
       state.user = undefined
       state.isAuthenticated = false
-     } )
-     builder.addCase(signIn.fulfilled, (state, action) => {
+    })
+    builder.addCase(signIn.fulfilled, (state, action) => {
       state.accessToken = action.payload.token
       state.isAuthenticated = true
       state.isAuthenticating = false
       state.user = action.payload.user
-     })
-     builder.addCase(signIn.rejected, (state, action) => {
-      state.accessToken = ""
+    })
+    builder.addCase(signIn.rejected, (state, action) => {
+      state.accessToken = ''
       state.isAuthenticated = false
       state.isAuthenticating = false
       state.user = undefined
-     })
+    })
+    builder.addCase(signOut.fulfilled, (state, action) => {
+      state.accessToken = ''
+      state.isAuthenticated = false
+      state.isAuthenticating = true
+      state.user = undefined
+    })
   },
 })
 
