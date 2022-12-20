@@ -1,7 +1,7 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/Layouts/withAuth'
 import React from 'react'
-import { DataGrid, GridColDef, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid'
+import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridToolbarFilterButton, GridValueGetterParams } from '@mui/x-data-grid'
 import { useAppDispatch } from '@/store/store'
 import { deleteProduct, getProducts, productSelector } from '@/store/slices/productSlice'
 import { useSelector } from 'react-redux'
@@ -10,15 +10,18 @@ import Image from 'next/image'
 import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
 import {
+Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Fab,
   IconButton,
   Slide,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
 import NumberFormat from "react-number-format";
@@ -28,6 +31,8 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { ProductData } from '@/models/product.model'
 import { TransitionProps } from '@mui/material/transitions'
+import Link from 'next/link'
+import { Search, Clear, Add } from '@mui/icons-material'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -38,6 +43,30 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />
 })
 
+const CustomToolbar: React.FunctionComponent<{
+  setFilterButtonEl: React.Dispatch<
+    React.SetStateAction<HTMLButtonElement | null>
+  >
+}> = ({ setFilterButtonEl }) => (
+  <GridToolbarContainer>
+    <GridToolbarFilterButton ref={setFilterButtonEl} />
+    <Link href="/stock/add" passHref>
+      <Fab
+        color="primary"
+        aria-label="add"
+        sx={{
+          position: 'absolute',
+          top: 10,
+          right: 10,
+        }}
+      >
+        <Add />
+      </Fab>
+    </Link>
+  </GridToolbarContainer>
+)
+
+
 type Props = {}
 
 const  Stock = ({}: Props) => {
@@ -47,14 +76,14 @@ const  Stock = ({}: Props) => {
   const [openDialog, setOpenDialog] = React.useState<boolean>(false)
   const [selectedProduct, setSelectedProduct] = React.useState<ProductData | null>(null)
 
+  const [filterButtonEl, setFilterButtonEl] = React.useState<HTMLButtonElement | null>(null)
 
   React.useEffect(() => {
     dispatch(getProducts())
   }, [dispatch])
 
-  const handleClose = () => {
-    setOpenDialog(false)
-  }
+ 
+
 
    const showDialog = () => {
      if (selectedProduct === null) {
@@ -185,17 +214,28 @@ const  Stock = ({}: Props) => {
     },
   ]
 
+  
 
 
   return (
     <Layout>
-      <div>Stock</div>
       <DataGrid
         sx={{ backgroundColor: 'white', height: '70vh' }}
         rows={productList ?? []}
         columns={columns}
         pageSize={15}
         rowsPerPageOptions={[15]}
+        components={{
+          Toolbar: CustomToolbar,
+        }}
+        componentsProps={{
+          panel: {
+            anchorEl: filterButtonEl,
+          },
+          toolbar: {
+            setFilterButtonEl,
+          },
+        }}
       />
       {showDialog()}
     </Layout>
