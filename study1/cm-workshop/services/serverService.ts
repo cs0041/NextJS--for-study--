@@ -48,3 +48,7 @@ export const getProducts = async (keyword?: string): Promise<ProductData[]> => {
     return (await httpClient.get(`/stock/product`)).data
   }
 }
+
+export const deleteProduct = async (id?: string): Promise<void> => {
+  await httpClient.delete(`/stock/product/${id}`)
+}
