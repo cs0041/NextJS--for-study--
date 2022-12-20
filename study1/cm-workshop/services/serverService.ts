@@ -1,4 +1,5 @@
 import { SignIn, SignUp, GetSession } from '@/models/auth.model'
+import { ProductData } from '@/models/product.model'
 import { UserData } from '@/models/user.model'
 import httpClient from '@/utils/httpClient'
 import axios from 'axios'
@@ -37,4 +38,13 @@ export const getSession = async (): Promise<GetSession> => {
   })
 
   return response.data
+}
+
+
+export const getProducts = async (keyword?: string): Promise<ProductData[]> => {
+  if (keyword) {
+    return (await httpClient.get(`/stock/product/keyword/${keyword}`)).data
+  } else {
+    return (await httpClient.get(`/stock/product`)).data
+  }
 }

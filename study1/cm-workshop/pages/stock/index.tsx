@@ -1,30 +1,54 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/Layouts/withAuth'
-import { userSelector, resetUsername, signUp } from '@/store/slices/userSlice'
-import { useAppDispatch } from '@/store/store'
 import React from 'react'
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid'
+import { useAppDispatch } from '@/store/store'
+import { getProducts, productSelector } from '@/store/slices/productSlice'
 import { useSelector } from 'react-redux'
 
 type Props = {}
 
 const  Stock = ({}: Props) => {
-  const user = useSelector(userSelector)
+
   const dispatch = useAppDispatch()
+  const productList = useSelector(productSelector)
+
+
+  React.useEffect(() => {
+    dispatch(getProducts())
+  }, [dispatch])
+  
+
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    {
+      field: 'name',
+      headerName: 'name',
+      width: 150,
+    },
+    {
+      field: 'stock',
+      headerName: 'stock',
+      width: 150,
+    },
+  
+  ]
+
+
 
   return (
     <Layout>
-      <div>Lek {user.username}</div>
-      <button onClick={() => dispatch(resetUsername({ data: '5555' }))}>
-        Reset
-      </button>
-
-      <button
-        onClick={() =>
-          dispatch(signUp({ username: 'admin', password: '1234' }))
-        }
-      >
-        SignUp
-      </button>
+      <div>Stock</div>
+      <div style={{ height: 400, width: '100%' }}>
+        <DataGrid
+          rows={productList ?? []}
+          columns={columns}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+          checkboxSelection
+          disableSelectionOnClick
+        />
+      </div>
     </Layout>
   )
 }
