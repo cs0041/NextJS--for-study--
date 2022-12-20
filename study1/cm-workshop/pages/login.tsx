@@ -14,10 +14,11 @@ import Router, { useRouter } from 'next/router'
 import { Box } from '@mui/material'
 import { useAppDispatch } from '@/store/store'
 import { signIn } from '@/store/slices/userSlice'
+import withAuth from '@/components/Layouts/withAuth'
 
 type Props = {}
 
-export default function login({}: Props) {
+const login = ({}: Props) => {
    const dispatch = useAppDispatch()
    const router = useRouter()
    
@@ -119,3 +120,5 @@ export default function login({}: Props) {
     </React.Fragment>
   )
 }
+
+export default withAuth( login );

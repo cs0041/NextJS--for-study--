@@ -1,4 +1,4 @@
-import { SignIn, SignUp } from '@/models/auth.model'
+import { SignIn, SignUp, GetSession } from '@/models/auth.model'
 import { UserData } from '@/models/user.model'
 import httpClient from '@/utils/httpClient'
 import axios from 'axios'
@@ -28,5 +28,13 @@ export async function signOut() {
   const response = await httpClient.get(`/auth/signout`, {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API,
   })
+  return response.data
+}
+
+export const getSession = async (): Promise<GetSession> => {
+  const response = await httpClient.get(`/auth/session`, {
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API,
+  })
+
   return response.data
 }
