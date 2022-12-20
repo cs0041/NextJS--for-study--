@@ -1,10 +1,14 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/Layouts/withAuth'
 import React from 'react'
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid'
+import { DataGrid, GridColDef, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid'
 import { useAppDispatch } from '@/store/store'
 import { getProducts, productSelector } from '@/store/slices/productSlice'
 import { useSelector } from 'react-redux'
+import { productImageURL } from '@/utils/commonUtil'
+import Image from 'next/image'
+import Zoom from 'react-medium-image-zoom'
+import 'react-medium-image-zoom/dist/styles.css'
 
 type Props = {}
 
@@ -22,6 +26,26 @@ const  Stock = ({}: Props) => {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
+      headerName: 'IMG',
+      field: 'image',
+      width: 80,
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+      <Zoom>
+
+        <Image
+          height={500}
+          width={500}
+          objectFit="cover"
+          alt="product image"
+          src={productImageURL(value)}
+          style={{ width: 70, height: 70, borderRadius: '5%' }}
+        />
+
+      </Zoom>
+       
+      ),
+    },
+    {
       field: 'name',
       headerName: 'name',
       width: 150,
@@ -31,7 +55,6 @@ const  Stock = ({}: Props) => {
       headerName: 'stock',
       width: 150,
     },
-  
   ]
 
 
