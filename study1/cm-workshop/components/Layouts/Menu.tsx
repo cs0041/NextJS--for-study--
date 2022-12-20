@@ -6,12 +6,17 @@ import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import InboxIcon from '@mui/icons-material/MoveToInbox'
 import MailIcon from '@mui/icons-material/Mail'
+import { blue } from '@mui/material/colors'
+import { ListItem, Stack } from '@mui/material'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Layers, BarChart, Person } from '@mui/icons-material'
+import router from 'next/router'
 
 const drawerWidth = 240
 
@@ -45,8 +50,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }))
 
-
-
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
@@ -66,9 +69,8 @@ const Drawer = styled(MuiDrawer, {
 
 type MenuProp = {
   open: boolean
-  onDrawerClose(): void
+  onDrawerClose: () => void
 }
-
 
 export default function Menu({ open, onDrawerClose }: MenuProp) {
   const theme = useTheme()
@@ -76,61 +78,79 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
   return (
     <Drawer variant="permanent" open={open}>
       <DrawerHeader>
-        <IconButton onClick={onDrawerClose}>
-          {theme.direction === 'rtl' ? (
-            <ChevronRightIcon />
-          ) : (
-            <ChevronLeftIcon />
-          )}
-        </IconButton>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{ backgroundColor: blue }}
+        >
+          <Image
+            src="/static/img/cm_logo.png"
+            width={200}
+            height={40}
+            objectFit="contain"
+            alt="logo"
+          />
+          <IconButton onClick={onDrawerClose}>
+            {theme.direction === 'ltr' ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
+          </IconButton>
+        </Stack>
       </DrawerHeader>
       <Divider />
+
+      <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
+        {/* Stock */}
+        <Link href="/stock" passHref>
+          <ListItem
+            button
+            className={router.pathname === '/stock' ? 'Mui-selected' : ''}
+          >
+            <ListItemIcon>
+              <Layers />
+            </ListItemIcon>
+            <ListItemText primary="Stock" />
           </ListItem>
-        ))}
+        </Link>
+
+        {/* Report */}
+        <Link href="/report" passHref>
+          <ListItem
+            button
+            className={router.pathname === '/report' ? 'Mui-selected' : ''}
+          >
+            <ListItemIcon>
+              <BarChart />
+            </ListItemIcon>
+            <ListItemText primary="Report" />
+          </ListItem>
+        </Link>
+
+        {/* Aboutus */}
+        <Link href="/aboutus" passHref>
+          <ListItem
+            button
+            className={router.pathname === '/aboutus' ? 'Mui-selected' : ''}
+          >
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="About us" />
+          </ListItem>
+        </Link>
       </List>
+
       <Divider />
       <List>
         {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
+          <ListItem button key={text}>
+            <ListItemIcon>
+              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon>
+            <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>
